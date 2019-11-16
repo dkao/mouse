@@ -74,6 +74,7 @@ bool initComplete = false;
 int16_t dx;
 int16_t dy;
 
+unsigned long curTime;
 unsigned long lastTS;
 unsigned long lastButtonCheck = 0;
 
@@ -344,14 +345,14 @@ void checkButtonState() {
   if (!initComplete)
     return;
 
-  unsigned long elapsed = micros() - lastButtonCheck;
+  unsigned long elapsed = curTime - lastButtonCheck;
 
   // Update at a period of 1/8 of the DEBOUNCE time
   if (elapsed < (DEBOUNCE * 1000UL / 8)) {
     return;
   }
 
-  lastButtonCheck = micros();
+  lastButtonCheck = curTime;
 
   // Fast debounce (works with 0 latency most of the time)
   for (int i = 0; i < 5; i++) {
@@ -369,7 +370,7 @@ void checkButtonState() {
       buttonState[i] = false;
 
       if (buttonPin[i] == MOUSE_MIDDLE_PIN) {
-        middleClickRelease = micros();
+        middleClickRelease = curTime;
       }
     }
   }
@@ -377,13 +378,13 @@ void checkButtonState() {
 
 signed char moveWheel() {
   // If the mouse wheel was just released, do not scroll.
-  unsigned long elapsed = micros() - middleClickRelease;
+  unsigned long elapsed = curTime - middleClickRelease;
   if (elapsed < SCROLL_BUTT_DEBOUNCE) {
     return 0;
   }
 
   // Limit the number of scrolls per unit time.
-  elapsed = micros() - lastScroll;
+  elapsed = curTime - lastScroll;
   if (elapsed < SCROLL_DEBOUNCE) {
     return 0;
   }
@@ -394,7 +395,7 @@ signed char moveWheel() {
     return 0;
   }
   
-  lastScroll = micros();
+  lastScroll = curTime;
   
   int d1 = analogRead(OPT_ENC_PIN1);
   int d2 = analogRead(OPT_ENC_PIN2);
@@ -417,7 +418,7 @@ void loop() {
   }
 
   byte burstBuffer[12];
-  unsigned long curTime = micros();
+  curTime = micros();
   unsigned long elapsed = curTime - lastTS;
 
   checkButtonState();
