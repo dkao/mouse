@@ -27,7 +27,7 @@
 // If lower, it should be by factors of 1/2.
 static const int SPIMAXIMUMSPEED = 2000000;
 
-static const int CPI = 1200;
+static const int CPI = 800;
 static const int DEBOUNCE = 10; // ms
 static const int SCROLL_DEBOUNCE = 100; // ms
 static const int SCROLL_BUTT_DEBOUNCE = 100; // ms
